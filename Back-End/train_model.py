@@ -3,12 +3,10 @@ import joblib
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error, r2_score
-from sklearn.preprocessing import OneHotEncoder
 
 # Load dataset
 df = pd.read_csv("../Dataset/data.csv")
@@ -19,65 +17,24 @@ features = [
     "bathrooms",
     "sqft_living",
     "sqft_lot",
-    "floors",
-    "waterfront",
-    "view",
-    "condition",
-    "sqft_above",
-    "sqft_basement",
     "yr_built",
-    "yr_renovated",
-    "city",
+    "yr_renovated"
 ]
+
 
 target = "price"
 
 X = df[features]
 y = df[target]
 
-# Numerical and categorical columns
-numeric_features = [
-    "bedrooms",
-    "bathrooms",
-    "sqft_living",
-    "sqft_lot",
-    "floors",
-    "waterfront",
-    "view",
-    "condition",
-    "sqft_above",
-    "sqft_basement",
-    "yr_built",
-    "yr_renovated",
-]
-
-categorical_features = ["city"]
-
-# Numeric transformer
-numeric_transformer = Pipeline(
-    steps=[("imputer", SimpleImputer(strategy="median")), ("scaler", StandardScaler())]
-)
-
-# Categorical transformer
-categorical_transformer = Pipeline(
-    steps=[
-        ("imputer", SimpleImputer(strategy="most_frequent")),
-        ("onehot", OneHotEncoder(handle_unknown="ignore")),
-    ]
-)
-
-# Preprocessor
-preprocessor = ColumnTransformer(
-    transformers=[
-        ("num", numeric_transformer, numeric_features),
-        ("cat", categorical_transformer, categorical_features),
-    ]
-)
 
 # Full pipeline
-model = Pipeline(
-    steps=[("preprocessor", preprocessor), ("regressor", LinearRegression())]
-)
+model = Pipeline([
+    ("imputer",SimpleImputer(strategy="median")),
+    ("scaler",StandardScaler()),
+    ("regressor",LinearRegression())
+])
+
 
 # Train test split
 X_train, X_test, y_train, y_test = train_test_split(

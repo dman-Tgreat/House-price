@@ -27,15 +27,8 @@ def predict():
                     "bathrooms": data["bathrooms"],
                     "sqft_living": data["sqft_living"],
                     "sqft_lot": data["sqft_lot"],
-                    "floors": data["floors"],
-                    "waterfront": data["waterfront"],
-                    "view": data["view"],
-                    "condition": data["condition"],
-                    "sqft_above": data["sqft_above"],
-                    "sqft_basement": data["sqft_basement"],
                     "yr_built": data["yr_built"],
-                    "yr_renovated": data["yr_renovated"],
-                    "city": data["city"],
+                    "yr_renovated": data["yr_renovated"]
                 }
             ]
         )
@@ -50,4 +43,3 @@ def predict():
 
 if __name__ == "__main__":
     app.run(debug=True)
-    

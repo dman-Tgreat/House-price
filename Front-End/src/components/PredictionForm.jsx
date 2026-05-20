@@ -99,7 +99,7 @@ function PredictionForm() {
         </button>
         </form>
         {prediction && (
-          <div className="result-animate-result">
+          <div className="result">
             <h2>Estimated Price</h2>
             <p>${prediction}</p>
           </div>

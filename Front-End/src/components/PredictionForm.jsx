@@ -1,19 +1,17 @@
 import { useState } from "react";
 import axios from "axios";
-import {Home ,BedDouble ,Bath ,Sparkles } from "lucide-react";
+import { Home, BedDouble, Bath, Sparkles } from "lucide-react";
 
 function PredictionForm() {
   const [formData, setFormData] = useState({
+    sqft_living: "",
     bedrooms: "",
     bathrooms: "",
-    sqft_living: "",
-    sqft_lot: "",
-    yr_built: "",
-    yr_renovated: ""
+    condition: ""
   });
 
   const [prediction, setPrediction] = useState(null);
-  const [loading,setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -32,19 +30,17 @@ function PredictionForm() {
       const response = await axios.post(
         "http://127.0.0.1:5000/predict",
         {
+          sqft_living: Number(formData.sqft_living),
           bedrooms: Number(formData.bedrooms),
           bathrooms: Number(formData.bathrooms),
-          sqft_living: Number(formData.sqft_living),
-          sqft_lot: Number(formData.sqft_lot),
-          yr_built: Number(formData.yr_built),
-          yr_renovated: Number(formData.yr_renovated)
+          condition: Number(formData.condition)
         }
       );
 
       setTimeout(() => {
         setPrediction(response.data.predicted_price);
         setLoading(false);
-      },1200);
+      }, 1200);
 
     } catch (error) {
       console.error(error);
@@ -56,52 +52,72 @@ function PredictionForm() {
   return (
     <div className="page">
       <div className="background-glow"></div>
-      <div className="card">
+       <div className="card">
         <div className="title-section">
           <div className="icon-wrapper">
-            <Home size = {32} />
+            <Home size={32} />
           </div>
-           <h1>House Price Predictor</h1>
-           <p>Predict modern housing prices using Machine Learning.</p>
+
+          <h1>House Price Predictor</h1>
+
+          <p>
+            Predict modern housing prices using Machine Learning.
+          </p>
         </div>
 
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <BedDouble size={18} />
-            <input type="number" name="bedrooms" placeholder="Bedrooms" onChange={handleChange} required />
+            <input
+              type="number"
+              name="bedrooms"
+              placeholder="Bedrooms"
+              onChange={handleChange}
+              required
+            />
           </div>
+
           <div className="input-group">
             <Bath size={18} />
-            <input type="number" name="bathrooms" placeholder="Bathrooms" onChange={handleChange} required />
+            <input
+              type="number"
+              name="bathrooms"
+              placeholder="Bathrooms"
+              onChange={handleChange}
+              required
+            />
           </div>
+
           <div className="input-group">
             <Home size={18} />
-            <input type="number" name="sqft-living" placeholder="Living Area" onChange={handleChange} required />
+            <input
+              type="number"
+              name="sqft_living"
+              placeholder="Living Area (sqft)"
+              onChange={handleChange}
+              required
+            />
           </div>
+
           <div className="input-group">
             <Sparkles size={18} />
-            <input type="number" name="sqft_lot" placeholder="Lot Size" onChange={handleChange} required />
+            <input
+              type="number"
+              name="condition"
+              placeholder="Condition (1-5)"
+              onChange={handleChange}
+              required
+            />
           </div>
-          <div className="input-group">
-            <Sparkles size={18} />
-            <input type="number" name="yr_built" placeholder="Year Built" onChange={handleChange} required />
-          </div>
-          <div className="input-group">
-            <Sparkles size={18} />
-            <input type="number" name="yr_renovated" placeholder="Year Renovated" onChange={handleChange} required />
-          </div>
-          <button type="submit">
-            {loading ? (
-              <div className="spinner"></div>
-            ): (
-                "Predict Price"
-            )}
-        </button>
+
+          <button type="submit" className="predict-btn">
+            {loading ? "Predicting..." : "Predict Price"}
+          </button>
         </form>
+
         {prediction && (
           <div className="result">
-            <h2>Estimated Price</h2>
-            <p>${prediction}</p>
+            <p>Predicted Price: ${prediction.toLocaleString()}</p>
           </div>
         )}
       </div>
@@ -110,3 +126,5 @@ function PredictionForm() {
 }
 
 export default PredictionForm;
+
+

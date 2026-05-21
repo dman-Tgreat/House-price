@@ -4,127 +4,150 @@ import { Home, BedDouble, Bath, Sparkles } from "lucide-react";
 
 function PredictionForm() {
   const [formData, setFormData] = useState({
-    sqft_living: "",
-    bedrooms: "",
-    bathrooms: "",
-    condition: ""
-  });
+    city: '',
+    bedrooms: '',
+    bathrooms: '',
+    sqft_living: '',
+    sqft_lot: '',
+    sqft_above: '',
+    sqft_basement: '',
+    floors: '',
+    waterfront: '',
+    view: '',
+    condition: '',
+    yr_built: '',
+    yr_renovated: ''
+  })
 
-  const [prediction, setPrediction] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [predictedPrice, setPredictedPrice] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
+    setFormData({ ...formData, [e.target.name]: e.target.value })
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    setLoading(true);
-    setPrediction(null);
-
+    e.preventDefault()
+    setLoading(true)
+    setError('')
+    setPredictedPrice(null)
+    
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:5000/predict",
-        {
-          sqft_living: Number(formData.sqft_living),
-          bedrooms: Number(formData.bedrooms),
-          bathrooms: Number(formData.bathrooms),
-          condition: Number(formData.condition)
-        }
-      );
-
-      setTimeout(() => {
-        setPrediction(response.data.predicted_price);
-        setLoading(false);
-      }, 1200);
-
-    } catch (error) {
-      console.error(error);
-      alert("Prediction failed");
-      setLoading(false);
+      const response = await axios.post('http://127.0.0.1:5000/predict', formData)
+      if (response.data.success) {
+        setPredictedPrice(response.data.predicted_price)
+      } else {
+        setError(response.data.error)
+      }
+    } catch (err) {
+      setError('Failed to connect to the backend server. Ensure Flask is running on port 5000.')
     }
-  };
+    setLoading(false)
+  }
 
   return (
-    <div className="page">
-      <div className="background-glow"></div>
-       <div className="card">
-        <div className="title-section">
-          <div className="icon-wrapper">
-            <Home size={32} />
-          </div>
-
-          <h1>House Price Predictor</h1>
-
-          <p>
-            Predict modern housing prices using Machine Learning.
-          </p>
+    <div className="app-container">
+      <div className="glass-card">
+        
+        <div className="card-header">
+          <h1 className="card-title">Real Estate Evaluation Model</h1>
+          <p className="card-subtitle">Enter property details to generate a dynamic prediction.</p>
         </div>
-
-        <form onSubmit={handleSubmit}>
-          <div className="input-group">
-            <BedDouble size={18} />
-            <input
-              type="number"
-              name="bedrooms"
-              placeholder="Bedrooms"
-              onChange={handleChange}
-              required
-            />
+        
+        <form onSubmit={handleSubmit} className="form-grid">
+          
+          <div className="input-group col-span-3">
+            <label className="input-label">City</label>
+            <input type="text" name="city" value={formData.city} onChange={handleChange} placeholder="e.g., Seattle" className="form-input" required />
           </div>
 
           <div className="input-group">
-            <Bath size={18} />
-            <input
-              type="number"
-              name="bathrooms"
-              placeholder="Bathrooms"
-              onChange={handleChange}
-              required
-            />
+            <label className="input-label">Bedrooms</label>
+            <input type="number" name="bedrooms" value={formData.bedrooms} onChange={handleChange} placeholder="e.g., 3" className="form-input" required />
           </div>
 
           <div className="input-group">
-            <Home size={18} />
-            <input
-              type="number"
-              name="sqft_living"
-              placeholder="Living Area (sqft)"
-              onChange={handleChange}
-              required
-            />
+            <label className="input-label">Bathrooms</label>
+            <input type="number" step="0.25" name="bathrooms" value={formData.bathrooms} onChange={handleChange} placeholder="e.g., 2.5" className="form-input" required />
           </div>
 
           <div className="input-group">
-            <Sparkles size={18} />
-            <input
-              type="number"
-              name="condition"
-              placeholder="Condition (1-5)"
-              onChange={handleChange}
-              required
-            />
+            <label className="input-label">Floors</label>
+            <input type="number" step="0.5" name="floors" value={formData.floors} onChange={handleChange} placeholder="e.g., 2" className="form-input" required />
           </div>
 
-          <button type="submit" className="predict-btn">
-            {loading ? "Predicting..." : "Predict Price"}
-          </button>
+          <div className="input-group">
+            <label className="input-label">Living Area (sqft)</label>
+            <input type="number" name="sqft_living" value={formData.sqft_living} onChange={handleChange} placeholder="e.g., 2000" className="form-input" required />
+          </div>
+
+          <div className="input-group">
+            <label className="input-label">Lot Size (sqft)</label>
+            <input type="number" name="sqft_lot" value={formData.sqft_lot} onChange={handleChange} placeholder="e.g., 5000" className="form-input" required />
+          </div>
+
+          <div className="input-group">
+            <label className="input-label">Sqft Above</label>
+            <input type="number" name="sqft_above" value={formData.sqft_above} onChange={handleChange} placeholder="e.g., 1500" className="form-input" required />
+          </div>
+
+          <div className="input-group">
+            <label className="input-label">Sqft Basement</label>
+            <input type="number" name="sqft_basement" value={formData.sqft_basement} onChange={handleChange} placeholder="e.g., 500 (0 if none)" className="form-input" required />
+          </div>
+
+          <div className="input-group">
+            <label className="input-label">Year Built</label>
+            <input type="number" name="yr_built" value={formData.yr_built} onChange={handleChange} placeholder="e.g., 1995" className="form-input" required />
+          </div>
+
+          <div className="input-group">
+            <label className="input-label">Year Renovated</label>
+            <input type="number" name="yr_renovated" value={formData.yr_renovated} onChange={handleChange} placeholder="e.g., 2010 (0 if none)" className="form-input" required />
+          </div>
+
+          <div className="input-group">
+            <label className="input-label">Condition (1-5)</label>
+            <input type="number" min="1" max="5" name="condition" value={formData.condition} onChange={handleChange} placeholder="1 to 5" className="form-input" required />
+          </div>
+
+          <div className="input-group">
+            <label className="input-label">View (0-4)</label>
+            <input type="number" min="0" max="4" name="view" value={formData.view} onChange={handleChange} placeholder="0 to 4" className="form-input" required />
+          </div>
+
+          <div className="input-group">
+            <label className="input-label">Waterfront (0 or 1)</label>
+            <input type="number" min="0" max="1" name="waterfront" value={formData.waterfront} onChange={handleChange} placeholder="0 = No, 1 = Yes" className="form-input" required />
+          </div>
+
+          <div className="col-span-3 submit-btn-container">
+            <button type="submit" disabled={loading} className="submit-btn">
+              {loading ? 'Running Gradient Boosting Regressor...' : 'Calculate Estimate'}
+            </button>
+          </div>
         </form>
 
-        {prediction && (
-          <div className="result">
-            <p>Predicted Price: ${prediction.toLocaleString()}</p>
+        {error && (
+          <div className="error-box">
+            {error}
           </div>
         )}
+
+        {predictedPrice !== null && !error && (
+          <div className="result-box">
+            <p className="result-label">Model Prediction</p>
+            <h2 className="result-value">
+              ${predictedPrice.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+            </h2>
+          </div>
+        )}
+        
       </div>
     </div>
   );
 }
-
 export default PredictionForm;
 
 

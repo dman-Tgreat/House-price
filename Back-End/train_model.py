@@ -112,3 +112,5 @@ payload = {
 }
 joblib.dump(payload, "model.pkl")
 print("Model saved to model.pkl")
+print("\nTo predict on new data, load the payload and call:")
+print("  price = np.expm1(payload['model'].predict(X_new))")
